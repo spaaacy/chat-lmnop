@@ -17,6 +17,10 @@
 }
 
 @layer components {
+  .prompt_text {
+    @apply text-white font-montserrat text-lg font-semibold
+  }
+
   .max_width {
     max-width: 1080px; 
     margin: 0 auto;

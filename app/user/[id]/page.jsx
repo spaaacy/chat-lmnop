@@ -1,13 +1,23 @@
 "use client";
 
+import { capitalizeFirstLetter } from "@utils/helpers";
 import { useEffect, useState } from "react";
 
 const PostCard = ({ post }) => {
-  const { question, response } = post;
+  //TODO: add timestamp
+  const { conversation } = post;
   return (
-    <div>
-      <p>{question}</p>
-      <p>{response}</p>
+    <div className="rounded-lg bg-white p-4 m-8 shadow-xl">
+      <ul>
+        {conversation.map((message, index) => (
+          <li key={index}>
+            <p className="text-lg">
+              <span className="font-bold ">{`${capitalizeFirstLetter(message.role)}: `}</span>
+              {message.content}
+            </p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };

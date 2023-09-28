@@ -1,26 +1,25 @@
 "use client";
 
 import { getChatResponse } from "@hooks/gpt_service";
+import { capitalizeFirstLetter } from "@utils/helpers";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
 
 const Home = () => {
   const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [questions, setQuestions] = useState([]);
-  const [responses, setResponses] = useState([]);
+  const [conversation, setConversation] = useState([]);
   const { data: session } = useSession();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setQuestions([...questions, input]);
     setInput("");
-    const { choices } = await getChatResponse(input);
-    const gptResponse = choices[0].message.content;
-    setOutput(gptResponse);
-    setResponses([...responses, gptResponse]);
+    setLoading(true);
+
+    const query = { role: "user", content: input };
+    await setConversation([...conversation, query]);
+    const { choices } = await getChatResponse([...conversation, query]);
+    await setConversation([...conversation, query, { role: "system", content: choices[0].message.content }]);
     setLoading(false);
   };
 
@@ -28,8 +27,7 @@ const Home = () => {
     await fetch("/api/output/create", {
       method: "POST",
       body: JSON.stringify({
-        question: questions[questions.length - 1],
-        response: output,
+        conversation: conversation,
         userId: session?.user.id,
       }),
     });
@@ -38,11 +36,29 @@ const Home = () => {
   return (
     <section className="padding-x flex flex-col flex-auto mb-4 w-full">
       <div className="bg-translucent rounded-lg p-4 flex-auto flex flex-col justify-between">
-        <p className="text-white font-montserrat">{loading ? "Thinking..." : output ? output : "Ask me anything..."}</p>
+        {Array.isArray(conversation) && conversation.length > 0 ? (
+          <ul>
+            {conversation.map((message, index) => (
+              <li key={index}>
+                <p className="prompt_text">
+                  <span className="font-bold ">{`${capitalizeFirstLetter(message.role)}: `}</span>
+                  {message.content}
+                </p>
+              </li>
+            ))}
+            {loading && (
+              <li className="prompt_text">
+                <span className="font_bold">{`System: `}</span>...
+              </li>
+            )}
+          </ul>
+        ) : (
+          <p className="prompt_text">Ask me anything...</p>
+        )}
 
-        {output && (
+        {Array.isArray(conversation) && conversation.length > 0 && !loading && (
           <div className="self-end flex gap-2">
-            <button className="text-white font-bold" onClick={(e) => setOutput("")}>
+            <button className="text-white font-bold" onClick={(e) => setConversation([])}>
               Clear
             </button>
             <button className="text-white font-bold" onClick={(e) => saveOutput()}>

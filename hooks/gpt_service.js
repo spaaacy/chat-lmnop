@@ -1,21 +1,17 @@
-export const getChatResponse = async (query) => {
+export const getChatResponse = async (conversation) => {
   try {
-    const messageBody = JSON.stringify({
-      model: "gpt-3.5-turbo",
-      messages: [
-        { role: "system", content: "You are a helpful assistant." },
-        { role: "user", content: query },
-      ],
-    });
-
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
+        // TODO: use env here
         // "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Authorization": `Bearer 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`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer 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`,
+        "Content-Type": "application/json",
       },
-      body: messageBody,
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: conversation,
+      }),
     });
 
     const data = await response.json();
@@ -23,5 +19,4 @@ export const getChatResponse = async (query) => {
   } catch (error) {
     console.error(error);
   }
-
 };

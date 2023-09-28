@@ -3,12 +3,10 @@ import Output from "@models/output";
 
 export const POST = async (req, res) => {
   try {
-    console.log(res);
-    const { question, response, userId } = await req.json();
+    const { conversation, userId } = await req.json();
     await connectToDb();
     Output.create({
-      question: question,
-      response: response,
+      conversation: conversation,
       userId: userId,
     });
     return new Response("Output has been remotely created", { status: 200 });

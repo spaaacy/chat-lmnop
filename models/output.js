@@ -1,13 +1,9 @@
 import { Schema, model, models } from "mongoose";
 
 const OutputSchema = new Schema({
-  question: {
-    type: String,
-    required: [true, "A question is required"]
-  },
-  response: {
-    type: String,
-    required: [true, "An output is required"],
+  conversation: {
+    type: [{role: String, content: String}],
+    required: [true, "A conversation is required"]
   },
   userId: {
     type: Schema.Types.ObjectId,

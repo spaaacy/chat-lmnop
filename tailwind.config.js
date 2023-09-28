@@ -15,7 +15,8 @@ module.exports = {
         palanquin: ["Palanquin", "sans-serif"],
       },
       colors: {
-        slate: "#6D6D6D"
+        slate: "#6D6D6D",
+        translucent: "#00000066"
       }
     },
   },

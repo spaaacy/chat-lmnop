@@ -14,14 +14,12 @@ const handler = NextAuth({
     async session({ session, token, user }) {
       try {
         await connectToDb();
-
         const existingUser = await User.findOne({ email: session.user.email });
-
+        session.user.id = existingUser._id.toString();
         session.user.image = existingUser.image;
-        console.log(session.user);
         return session;
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     },
     async signIn({ user, account, profile, email, credentials }) {
@@ -39,7 +37,7 @@ const handler = NextAuth({
         }
         return true;
       } catch (error) {
-        console.log(error);
+        console.error(error);
         return false;
       }
     },

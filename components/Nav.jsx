@@ -2,6 +2,7 @@
 
 import { signIn, getProviders, useSession, signOut } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 const Nav = () => {
@@ -18,16 +19,17 @@ const Nav = () => {
 
   return (
     <nav className="sticky top-0 flex justify-between items-center padding">
-      <div>
+      <Link href="/">
         <h1 className="font-bold text-white text-3xl">ChatLMNOP</h1>
-      </div>
+      </Link>
       {session ? (
         <div className="flex-center gap-4">
-          {console.log(session?.user)}
           <button type="button" className="nav_button" onClick={() => signOut()}>
             Sign Out
           </button>
-          <Image src={session?.user.image} alt="user_image" width={45} height={45} />
+          <Link href={`/user/${session?.user.id}`}>
+            <Image src={session?.user.image} alt="user_image" width={45} height={45} />
+          </Link>
         </div>
       ) : (
         <>

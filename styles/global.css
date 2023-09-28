@@ -9,7 +9,7 @@
     @apply font-montserrat;
   }
   p {
-    @apply font-palanquin;
+    @apply font-palanquin font-semibold;
   }
   button {
     @apply font-palanquin;
@@ -17,6 +17,11 @@
 }
 
 @layer components {
+  .max_width {
+    max-width: 1080px; 
+    margin: 0 auto;
+  }
+  
   .nav_button {
     @apply text-lg ease-out duration-300 hover:text-white hover:bg-transparent text-slate  font-bold px-6 py-2 rounded-full bg-white;
   }
@@ -25,6 +30,9 @@
 @layer utilities {
   .padding {
     @apply px-12 py-8;
+  }
+  .padding-x {
+    @apply px-12;
   }
 
   .flex-center {

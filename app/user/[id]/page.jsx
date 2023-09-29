@@ -1,13 +1,14 @@
 "use client";
 
+import formatDate from "@utils/formatDate";
 import { capitalizeFirstLetter } from "@utils/helpers";
 import { useEffect, useState } from "react";
 
 const PostCard = ({ post }) => {
-  //TODO: add timestamp
   const { conversation } = post;
   return (
     <div className="rounded-lg bg-white p-4 m-8 shadow-xl">
+      <p className="font-light italic">{new Date(post.createdAt).toLocaleString()}</p>
       <ul>
         {conversation.map((message, index) => (
           <li key={index}>

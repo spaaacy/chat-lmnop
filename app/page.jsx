@@ -3,11 +3,27 @@
 import { getChatResponse } from "@hooks/gpt_service";
 import { capitalizeFirstLetter } from "@utils/helpers";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+
+const SaveModal = ({ modal }) => (
+  <div>
+    {modal && (
+      <div className="w-full h-full fixed flex-center">
+        <div className="flex-center shadow-xl rounded-xl bg-white w-[300px] h-[100px] p-4">
+          <p className="text-lg">Conversation has been saved!</p>
+        </div>
+      </div>
+    )}
+  </div>
+);
 
 const Home = () => {
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showSave, setShowSave] = useState(false);
+  const [modal, setModal] = useState(false);
   const [conversation, setConversation] = useState([]);
   const { data: session } = useSession();
 
@@ -21,6 +37,7 @@ const Home = () => {
     const { choices } = await getChatResponse([...conversation, query]);
     await setConversation([...conversation, query, { role: "system", content: choices[0].message.content }]);
     setLoading(false);
+    setShowSave(true);
   };
 
   const saveOutput = async () => {
@@ -32,6 +49,19 @@ const Home = () => {
       }),
     });
   };
+
+  const handleSave = () => {
+    setShowSave(false);
+    setModal(true);
+    saveOutput();
+  };
+
+  useEffect(() => {
+    if (!modal) return;
+    setTimeout(() => {
+      setModal(false);
+    }, 2000);
+  }, [modal]);
 
   return (
     <section className="padding-x flex flex-col flex-auto mb-4 w-full">
@@ -58,16 +88,27 @@ const Home = () => {
 
         {Array.isArray(conversation) && conversation.length > 0 && !loading && (
           <div className="self-end flex gap-2">
-            <button className="text-white font-bold" onClick={(e) => setConversation([])}>
-              Clear
-            </button>
-            <button className="text-white font-bold" onClick={(e) => saveOutput()}>
-              Save
-            </button>
+            <Image
+              src={"assets/icons/backspace.svg"}
+              className="hover:cursor-pointer filter_white"
+              alt="save"
+              width={25}
+              height={25}
+              onClick={(e) => setConversation([])}
+            />
+            {showSave && (
+              <Image
+                src={"assets/icons/save.svg"}
+                className="hover:cursor-pointer filter_white"
+                alt="save"
+                width={25}
+                height={25}
+                onClick={(e) => handleSave()}
+              />
+            )}
           </div>
         )}
       </div>
-
       <form
         className="rounded-lg p-2 mt-4 flex-center gap-2 bg-translucent border border-transparent hover:border-white"
         onSubmit={handleSubmit}
@@ -82,6 +123,7 @@ const Home = () => {
           Enter
         </button>
       </form>
+      {createPortal(<SaveModal modal={modal} />, document.body)}
     </section>
   );
 };

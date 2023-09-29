@@ -32,6 +32,11 @@
 }
 
 @layer utilities {
+  .filter_white {
+    filter: invert(100%) sepia(0%) saturate(7500%) hue-rotate(163deg) brightness(104%) contrast(105%);
+  }
+
+  
   .padding {
     @apply px-12 py-8;
   }

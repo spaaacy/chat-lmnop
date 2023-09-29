@@ -1,23 +1,12 @@
 "use client";
 
+import MessageModal from "@components/MessageModal";
 import { getChatResponse } from "@hooks/gpt_service";
 import { capitalizeFirstLetter } from "@utils/helpers";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-
-const SaveModal = ({ modal }) => (
-  <div>
-    {modal && (
-      <div className="w-full h-full fixed flex-center">
-        <div className="flex-center shadow-xl rounded-xl bg-white w-[300px] h-[100px] p-4">
-          <p className="text-lg">Conversation has been saved!</p>
-        </div>
-      </div>
-    )}
-  </div>
-);
 
 const Home = () => {
   const [input, setInput] = useState("");
@@ -58,9 +47,10 @@ const Home = () => {
 
   useEffect(() => {
     if (!modal) return;
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setModal(false);
     }, 2000);
+    return () => clearTimeout(timeout);
   }, [modal]);
 
   return (
@@ -123,7 +113,7 @@ const Home = () => {
           Enter
         </button>
       </form>
-      {createPortal(<SaveModal modal={modal} />, document.body)}
+      {createPortal(<MessageModal message="Conversation has been saved!" isDisplayed={modal} />, document.body)}
     </section>
   );
 };
